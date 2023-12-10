@@ -1,0 +1,9 @@
+/* MJS URI Challenge 3 - Dynamic Javascript - Timed Javascript quiz */ 
+#main {
+    background: blue;
+}
+
+#viewHighScoreButton {
+    color: purple; 
+    background: white;
+}
