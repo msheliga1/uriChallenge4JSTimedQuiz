@@ -6,4 +6,45 @@
 #viewHighScoreButton {
     color: purple; 
     background: white;
+    border: none;
+}
+
+#quizTitle {
+    margin-top: 5%;
+    text-align: center;
+}
+
+/* for start and answer buttons */
+.defaultBtn {
+    background: purple;
+    border: none; 
+    border-radius: 20%;    
+    color: white; 
+    padding: 8px;
+    font-size: 20pt;
+    cursor: pointer;  /* hand icon */
+}
+
+.instruction {
+    text-align: center;
+}
+
+#startBtn {
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;  /* flex + auto, auto => centered! */
+    margin-top: 5%;
+    /* align-self: center; Wont work */
+}
+
+/* From hear down for questions and answers */
+#answerSection {
+    width: 60%;
+    margin-left: 20%;
+    background: pink; /* for debugging */
+    display: block;
+}
+
+.answerBtn {
+    margin-top: 1%;
 }
