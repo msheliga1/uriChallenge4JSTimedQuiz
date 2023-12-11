@@ -1,14 +1,14 @@
 // Mike Sheliga - 12.9.23
 // URI Challenge 4 - Dynamic Javascript - Timed Javascript Quiz with Scores
 
-alert("Welcome to Mike Sheliga's Timed Javascript Quiz");
+myLog("Welcome to Mike Sheliga's Timed Javascript Quiz");
 /* seems this must go first, or else uncaught ReferenceError. Can't access questions before initialization. */
 const questions = [];  /* global since used here and in displayQuestion */
 init( ); 
 
 function createStartScreen()
 {
-    alert("Starting createStartScreen");
+    myLog("Starting createStartScreen");
     var mainEl = document.getElementById("main");
     var btn = document.createElement("button");
     btn.innerHTML = "View High Scores";
@@ -39,48 +39,9 @@ function createStartScreen()
     mainEl.appendChild(div);
 }
 
-function createQuizScreen(questionNo)
-{
-    alert("Starting createQuizScreen for question " + questionNo + ". Questions is " + questions);
-    var mainEl = document.getElementById("main");
-    var div = document.createElement("div");
-    var timeLeftEl = document.createElement("p");
-    timeLeftEl.textContent = "Time Left: ";
-    timeLeftEl.setAttribute("id", "timeLeft");
-    div.appendChild(timeLeftEl);
-    mainEl.appendChild(div);
-    // questions must be declared before this, at least if its a const.
-    var question = questions[questionNo];
-    var maxQuestion = questions.length;
-    var prompt = question[0];
-    var answers = question[1];
-    var correct = question[2]; 
-    var answerSection = document.createElement("section"); 
-    answerSection.setAttribute("id", "answerSection");  // need to make questions and choices left aligned near middle
-    var div = document.createElement("div");
-    var promptEl = document.createElement("h1");
-    promptEl.innerText = "Q. (" + (questionNo + 1) + " of " + maxQuestion + "). " + prompt;
-    // promptEl.textContent = "Hola";
-    promptEl.setAttribute("id", "prompt");
-    div.appendChild(promptEl);
-    answerSection.appendChild(div); 
-    for (var i = 0; i < answers.length; i++) {
-        var div = document.createElement("div");  /* couldnt get multi-line display wout this despite display:block - arghhh! */
-        var answerBtn = document.createElement("button");
-        answerBtn.innerText = "" + (i+1) + ". " + answers[i];
-        /* answerBtn.setAttribute("id", "answerBtn"); /* /* multiple buttons should not have same id */
-        answerBtn.setAttribute("class", "answerBtn defaultBtn");
-        answerBtn.onclick = checkAnswer;
-        div.appendChild(answerBtn);
-        answerSection.appendChild(div);
-    }
-    mainEl.appendChild(answerSection);
-    alert("Done creating quiz screen");
-}
 
-function checkAnswer(ev) {
-    alert("Checking the answer " + ev);
-}
+
+
 
 
 // Clear the main part of the screen - leave the title the same always
@@ -98,27 +59,185 @@ function clearMain( )
 
 // Take the Quiz
 function takeQuiz( ) {
-    alert("You are taking the quiz");
-    var timeLeft = 5; 
+    myLog("Starting take quiz.");
+    const totalQuizTime = 20;  // change to 75 for real quiz
+    const wrongPenaltyTime = 5;  // 15 in demo
+
+    /* These 3 variables are effectively global inside the takeQuiz screen. */
+    var timeLeftObj = { timeLeft: totalQuizTime}; 
     var questionNo = 0;
+    var correctOrWrong = "First Question .... ";  // set by Check answer method
+
+    var questions = getQuestions(); // uses lazy initialization to setup array
     const myInterval = setInterval(tHandler, 1000);  // myInterval must be available to tHandler method
     clearMain();  // clear html main section
     createQuizScreen(questionNo);  // create time Left part, and Questions
-    updateDOMTime(timeLeft);
+    updateDOMTime(timeLeftObj.timeLeft);
 
     // would prefer this external to takeQuiz, but myInterval must be available to ClearInterval here, so it seems like it 
     // it must be an inner function
     function tHandler() {
-        timeLeft--;
+        subtractTime(timeLeftObj, 1);
+    }
+
+    // this accessory routine will subtract time from TimeLeft, update the html DOM (the screen), and exit if no time left.
+    // must pass in an Object (timeLeftObj) in order to be able to change the value.
+    function subtractTime(timeLeftObj, amountToSubtract) { 
+        timeLeftObj.timeLeft = timeLeftObj.timeLeft - amountToSubtract;
+        var timeLeft = timeLeftObj.timeLeft;   
         updateDOMTime(timeLeft);
         if (timeLeft <= 0) {
             clearInterval(myInterval);
-            alert("You Lost: No Time Left!");
-            // clear screen
+            alert("You Lost: No Time Left! Your score of 0 will not be recorded.");
+            clearMain();
+            createStartScreen();
             // display enter name screen
         }
     }
+
+    // Must be inside takeQuiz to call checkAnswer
+    // Create the quiz screen including time left, prompt and buttons for answers.
+    function createQuizScreen(questionNo)
+    {
+        myLog("Starting createQuizScreen for question " + questionNo + " Last answer " + correctOrWrong);
+        var mainEl = document.getElementById("main");
+        var div = document.createElement("div");
+        var timeLeftEl = document.createElement("p");
+        timeLeftEl.textContent = "Time Left: ";
+        timeLeftEl.setAttribute("id", "timeLeft");
+        div.appendChild(timeLeftEl);
+        mainEl.appendChild(div);
+        // questions must be declared before this, at least if its a const.
+        var questions = getQuestions();  // a finely organized object oriented type get method.
+        var question = questions[questionNo];
+        var maxQuestion = questions.length;
+        var prompt = question[0];
+        var answers = question[1];
+        var correct = question[2]; 
+        var answerSection = document.createElement("section"); 
+        answerSection.setAttribute("id", "answerSection");  // need to make questions and choices left aligned near middle
+        var div = document.createElement("div");
+        var promptEl = document.createElement("h1");
+        promptEl.innerText = "Q. (" + (questionNo + 1) + " of " + maxQuestion + "). " + prompt;
+        // promptEl.textContent = "Hola";
+        promptEl.setAttribute("id", "prompt");
+        promptEl.setAttribute("correct", correct);
+        div.appendChild(promptEl);
+        answerSection.appendChild(div); 
+        for (var i = 0; i < answers.length; i++) {
+            var div = document.createElement("div");  /* couldnt get multi-line display wout this despite display:block - arghhh! */
+            var answerBtn = document.createElement("button");
+            answerBtn.innerText = "" + (i+1) + ". " + answers[i];
+            /* answerBtn.setAttribute("id", "answerBtn"); /* /* multiple buttons should not have same id */
+            answerBtn.setAttribute("class", "answerBtn defaultBtn");
+            answerBtn.setAttribute("answer", answers[i]);
+            answerBtn.onclick = checkAnswer;  // beware not defined error - not sure why is previously occurred
+            // answerBtn.addEventListener("onclick", checkAnswer);
+            div.appendChild(answerBtn);
+            answerSection.appendChild(div);
+        }
+        mainEl.appendChild(answerSection);
+        var div = document.createElement("section");
+        div.setAttribute("id", "correctOrWrongDiv");
+        var par = document.createElement("p");
+        par.setAttribute("id", "correctOrWrong");
+        par.innerText = correctOrWrong;
+        div.appendChild(par);
+        answerSection.appendChild(div);
+
+        myLog("Done creating quiz screen");
+    }  // end createQuizScreen(QuestionNo)
+
+    // Must be inside TakeQuiz to get timeLeftObj (unless we fetch timer from the DOM)
+    function checkAnswer(ev) {
+        myLog("Entering checkAnswer");
+        var button = ev.target;
+        myLog("Checking the answer for ev target " + button);
+        var answer = button.getAttribute("answer");
+        myLog("The answer is: " + answer);
+        var promptEl = document.getElementById("prompt");
+        var correct = promptEl.getAttribute("correct")
+        myLog("Check Answer: Correct Answer: " + correct); 
+        if (answer.trim().toLowerCase() === correct.trim().toLowerCase()) {
+            myLog("Your correct answer was " + answer);
+            correctOrWrong = "Correct!";
+        } else {
+            myLog("Your wrong answer was " + answer);
+            correctOrWrong = "Wrong.";
+            // subtractTime may exit the screen
+            subtractTime(timeLeftObj, wrongPenaltyTime);
+        }
+        questionNo++;
+        if (questionNo >= getNumberOfQuestions()) {
+            // stop the clock immediately.
+            clearInterval(myInterval);
+            alert("You have won! - Your Score is " + timeLeftObj.timeLeft);
+            clearMain();
+
+        } else {
+            myLog("Beginning question " + questionNo);
+            clearMain();
+            createQuizScreen(questionNo);
+        }
+    }   // end checkAnswer
+
 }  // end TakeQuiz
+
+// ----------- Enter Initials Section --------------------- 
+   // Must be inside takeQuiz to call checkAnswer
+    // Create the quiz screen including time left, prompt and buttons for answers.
+    const scores = [];
+
+    function EnterInitialsScreen( )
+    {
+        myLog("Starting enterInitialsScreen ... currently stored scores is " + (scores.length + 1));
+        var mainEl = document.getElementById("main");
+        var div = document.createElement("div");
+        var timeLeftEl = document.createElement("p");
+        timeLeftEl.textContent = "Time Left: ";
+        timeLeftEl.setAttribute("id", "timeLeft");
+        div.appendChild(timeLeftEl);
+        mainEl.appendChild(div);
+        // questions must be declared before this, at least if its a const.
+        var questions = getQuestions();  // a finely organized object oriented type get method.
+        var question = questions[questionNo];
+        var maxQuestion = questions.length;
+        var prompt = question[0];
+        var answers = question[1];
+        var correct = question[2]; 
+        var answerSection = document.createElement("section"); 
+        answerSection.setAttribute("id", "answerSection");  // need to make questions and choices left aligned near middle
+        var div = document.createElement("div");
+        var promptEl = document.createElement("h1");
+        promptEl.innerText = "Q. (" + (questionNo + 1) + " of " + maxQuestion + "). " + prompt;
+        // promptEl.textContent = "Hola";
+        promptEl.setAttribute("id", "prompt");
+        promptEl.setAttribute("correct", correct);
+        div.appendChild(promptEl);
+        answerSection.appendChild(div); 
+        for (var i = 0; i < answers.length; i++) {
+            var div = document.createElement("div");  /* couldnt get multi-line display wout this despite display:block - arghhh! */
+            var answerBtn = document.createElement("button");
+            answerBtn.innerText = "" + (i+1) + ". " + answers[i];
+            /* answerBtn.setAttribute("id", "answerBtn"); /* /* multiple buttons should not have same id */
+            answerBtn.setAttribute("class", "answerBtn defaultBtn");
+            answerBtn.setAttribute("answer", answers[i]);
+            answerBtn.onclick = checkAnswer;  // beware not defined error - not sure why is previously occurred
+            // answerBtn.addEventListener("onclick", checkAnswer);
+            div.appendChild(answerBtn);
+            answerSection.appendChild(div);
+        }
+        mainEl.appendChild(answerSection);
+        var div = document.createElement("section");
+        div.setAttribute("id", "correctOrWrongDiv");
+        var par = document.createElement("p");
+        par.setAttribute("id", "correctOrWrong");
+        par.innerText = correctOrWrong;
+        div.appendChild(par);
+        answerSection.appendChild(div);
+
+        myLog("Done creating quiz screen");
+    }  // end createQuizScreen(QuestionNo)
 
 // when counting down (or as part of answering) we update the timeLeft.
 function updateDOMTime(timeLeft) {
@@ -129,16 +248,47 @@ function updateDOMTime(timeLeft) {
 /* initialization routines -------------------------------------- */
 /* Only need to create questions array once. */
 function init ( ) {
-    createStartScreen();
-    initQuestions(); 
+    createStartScreen();  // creates start screen and displays it. 
 }
 
+// ----------------- Question psuedo-class -----------------------------------------
+// this should really be private, but we haven't learned private or classes yet.
+var questionsArray = [];
+// Methods: initQuestions, getNumberOfQuestions, getQuestions
+
 function initQuestions() {
-    // alert("Beginning to initialize Questions array ... current length: " + questions.length);
+    if (questionsArray.length > 0) { 
+        return;  // questions already initializaed
+    }
+    myLog("Beginning to initialize Questions array ... current length: " + questionsArray.length);
     var prompt = "Commonly used data types do NOT include: ";
     var answers = ["strings", "booleans", "alerts", "numbers"];
     var correct = "alerts";
-    const question = [prompt, answers, correct];
-    questions.push(question);
-    alert("End initQuestions. Number of quesions: " + questions.length);
+    var question = [prompt, answers, correct];  // cant reassign to a constant.
+    questionsArray.push(question);
+    prompt = "Arrays in javascript can be used to store: ";
+    answers = ["numbers and strings", "other arrays", "booleans", "all of the above"];
+    correct = "all of the above";
+    question = [prompt, answers, correct];
+    questionsArray.push(question);
+    myLog("End initQuestions. Number of quesions: " + questionsArray.length);
 } 
+
+function getNumberOfQuestions() {
+    return questionsArray.length;
+}
+
+function getQuestions() {
+    if (questionsArray.length === 0) {
+        myLog("QuestionsArray empty, calling initQuestions ... ");
+        initQuestions(); 
+    }
+    // yah, I know we should do a deep copy, or make the object immutable, but 
+    // these are way beyone the scope
+    return questionsArray;
+}
+
+// Accessory routines - good to remove all console.logs, in case grader requires it.
+function myLog(text) {
+    console.log(text);
+}

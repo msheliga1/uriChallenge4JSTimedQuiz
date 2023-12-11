@@ -10,7 +10,7 @@
 }
 
 #quizTitle {
-    margin-top: 5%;
+    margin-top: 3%;
     text-align: center;
 }
 
@@ -33,7 +33,7 @@
     display: flex;
     margin-left: auto;
     margin-right: auto;  /* flex + auto, auto => centered! */
-    margin-top: 5%;
+    margin-top: 2%;
     /* align-self: center; Wont work */
 }
 
