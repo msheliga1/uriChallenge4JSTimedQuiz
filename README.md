@@ -30,7 +30,7 @@ Github:
     Insert Screenshot of deployment into readme file.  
   
 HTML, CSS and Javascript  
-    View the Acceptance Criteria.  
+    View the Acceptance Criteria.  - Fuzzy as usual, especially in regards to showScores,
     Create/Modify HTML and CSS.   
 
     Acceptance Criteria

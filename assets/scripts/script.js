@@ -336,5 +336,5 @@ function getQuestions() {
 
 // Accessory routines - good to remove all console.logs, in case grader requires it.
 function myLog(text) {
-    console.log(text);
+    // console.log(text);
 }
