@@ -8,9 +8,9 @@ This is the week 4 challenge due 12.11.23.
 
 ## Link to Repo and Deployed Webpage
 Link to GitHub Repo: https://github.com/msheliga1/uriChallenge4JSTimedQuiz.git
-Here is a link to the deployed github.io site. https://msheliga1.github.io/uriChallenge4JSTimedQuiz/ 
-Link to screenshot of deployed github.io site. ![Challenge 4 GitHub Deployed Start Screenshot](./assets/images/workingScreenshotStart.PNG) 
-Link to screenshot of deployed github.io site - Question. ![Challenge 4 GitHub Deployed Question Screenshot](./assets/images/workingScreenshotQuestion.PNG) 
+Here is a link to the deployed github.io site. https://msheliga1.github.io/uriChallenge4JSTimedQuiz/   
+Link to screenshot of deployed github.io site. ![Challenge 4 GitHub Deployed Start Screenshot](./assets/images/workingScreenshotStart.PNG)   
+Link to screenshot of deployed github.io site - Question. ![Challenge 4 GitHub Deployed Question Screenshot](./assets/images/workingScreenshotQuestion.PNG)   
 
 ## Project Goals
 In summary this repo will use dynamic javascript to create a timed multiple choice quiz with past scores.   
