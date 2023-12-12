@@ -1,22 +1,25 @@
 // Mike Sheliga - 12.9.23
 // URI Challenge 4 - Dynamic Javascript - Timed Javascript Quiz with Scores
-
+// myLog is great for debugging, but allows all console.logs to be removed at once.
 myLog("Welcome to Mike Sheliga's Timed Javascript Quiz");
+
 /* seems this must go first, or else uncaught ReferenceError. Can't access questions before initialization. */
-const questions = [];  /* global since used here and in displayQuestion */
+// const questions = [];  /* global since used here and in displayQuestion */
 init( ); 
 
 function createStartScreen()
 {
     myLog("Starting createStartScreen");
+    var div = document.createElement("div");  // needed for button to work!! - arghhh
     var mainEl = document.getElementById("main");
     var btn = document.createElement("button");
     btn.innerHTML = "View High Scores";
     btn.setAttribute("id", "viewHighScoreButton");
-    // btn.setAttribute("color", "purple");
-    // btn.bgcolor = "#ff00ff";
-    // btn.style.backgroundColor = "#ffffff"; 
-    mainEl.appendChild(btn);
+    // btn.addEventListener("onclick", showScores);
+    btn.onclick = showScores;
+    div.appendChild(btn);
+    mainEl.appendChild(div);
+
     var title = document.createElement("h1");
     title.innerText = "Coding Quiz Challenge";
     title.setAttribute("id", "quizTitle");
@@ -40,9 +43,24 @@ function createStartScreen()
 }
 
 
-
-
-
+// show the array of scores
+// since assignment didnt specify, I didn't sort this, nor save it to local storage. 
+// I also didnt see a screen of hwo this must look, so I did it the easy way with 
+// an alert. 
+function showScores() {
+    myLog("Entering showScores");
+    if (scores.length === 0) {
+        alert("There are no scores to show!");
+    } else {
+        var alertString = "Scores: \n";
+        for (var i=0; i < scores.length; i++) {
+            var score = scores[i];
+            alertString += (i+1) + ". " + score.initials;
+            alertString += " - " + score.score + "\n";
+        }
+        alert(alertString);
+    }
+}  // end method showScores
 
 // Clear the main part of the screen - leave the title the same always
 function clearMain( )
@@ -57,7 +75,8 @@ function clearMain( )
     }
 }
 
-// Take the Quiz
+// Take the Quiz 
+// Note: Do NOT display the high score buttons while taking the quiz.
 function takeQuiz( ) {
     myLog("Starting take quiz.");
     const totalQuizTime = 20;  // change to 75 for real quiz
@@ -167,77 +186,94 @@ function takeQuiz( ) {
             // subtractTime may exit the screen
             subtractTime(timeLeftObj, wrongPenaltyTime);
         }
+        if (timeLeftObj.timeLeft <= 0) {  // subtractTime will have loaded new screen.
+            return;
+        }
         questionNo++;
         if (questionNo >= getNumberOfQuestions()) {
             // stop the clock immediately.
             clearInterval(myInterval);
+            myLog("You have won - your score is " + timeLeftObj.timeLeft);
             alert("You have won! - Your Score is " + timeLeftObj.timeLeft);
             clearMain();
-
+            createInitialsScreen(timeLeftObj);
         } else {
             myLog("Beginning question " + questionNo);
             clearMain();
             createQuizScreen(questionNo);
         }
     }   // end checkAnswer
-
 }  // end TakeQuiz
 
 // ----------- Enter Initials Section --------------------- 
-   // Must be inside takeQuiz to call checkAnswer
     // Create the quiz screen including time left, prompt and buttons for answers.
     const scores = [];
 
-    function EnterInitialsScreen( )
+    function createInitialsScreen(timeLeftObj)
     {
-        myLog("Starting enterInitialsScreen ... currently stored scores is " + (scores.length + 1));
+        myLog("Starting enterInitialsScreen, score " + timeLeftObj.timeLeft + " ... currently stored scores is " + (scores.length + 1));
         var mainEl = document.getElementById("main");
-        var div = document.createElement("div");
-        var timeLeftEl = document.createElement("p");
-        timeLeftEl.textContent = "Time Left: ";
-        timeLeftEl.setAttribute("id", "timeLeft");
-        div.appendChild(timeLeftEl);
-        mainEl.appendChild(div);
-        // questions must be declared before this, at least if its a const.
-        var questions = getQuestions();  // a finely organized object oriented type get method.
-        var question = questions[questionNo];
-        var maxQuestion = questions.length;
-        var prompt = question[0];
-        var answers = question[1];
-        var correct = question[2]; 
-        var answerSection = document.createElement("section"); 
-        answerSection.setAttribute("id", "answerSection");  // need to make questions and choices left aligned near middle
-        var div = document.createElement("div");
-        var promptEl = document.createElement("h1");
-        promptEl.innerText = "Q. (" + (questionNo + 1) + " of " + maxQuestion + "). " + prompt;
-        // promptEl.textContent = "Hola";
-        promptEl.setAttribute("id", "prompt");
-        promptEl.setAttribute("correct", correct);
-        div.appendChild(promptEl);
-        answerSection.appendChild(div); 
-        for (var i = 0; i < answers.length; i++) {
-            var div = document.createElement("div");  /* couldnt get multi-line display wout this despite display:block - arghhh! */
-            var answerBtn = document.createElement("button");
-            answerBtn.innerText = "" + (i+1) + ". " + answers[i];
-            /* answerBtn.setAttribute("id", "answerBtn"); /* /* multiple buttons should not have same id */
-            answerBtn.setAttribute("class", "answerBtn defaultBtn");
-            answerBtn.setAttribute("answer", answers[i]);
-            answerBtn.onclick = checkAnswer;  // beware not defined error - not sure why is previously occurred
-            // answerBtn.addEventListener("onclick", checkAnswer);
-            div.appendChild(answerBtn);
-            answerSection.appendChild(div);
-        }
-        mainEl.appendChild(answerSection);
-        var div = document.createElement("section");
-        div.setAttribute("id", "correctOrWrongDiv");
-        var par = document.createElement("p");
-        par.setAttribute("id", "correctOrWrong");
-        par.innerText = correctOrWrong;
-        div.appendChild(par);
-        answerSection.appendChild(div);
+        var allDoneSection = document.createElement("section");
+        mainEl.appendChild(allDoneSection);
+        allDoneSection.setAttribute("id", "allDoneSection");
 
-        myLog("Done creating quiz screen");
-    }  // end createQuizScreen(QuestionNo)
+        var div = document.createElement("div");
+        allDoneSection.appendChild(div);
+        var allDone = document.createElement("h1");
+        div.appendChild(allDone);
+        allDone.textContent = "All Done!";
+        allDone.setAttribute("id", "All Done");
+
+        div = document.createElement("div");
+        allDoneSection.appendChild(div); 
+        var promptEl = document.createElement("h3");
+        div.appendChild(promptEl);
+        promptEl.innerText = "Your final score is " + timeLeftObj.timeLeft;
+        promptEl.setAttribute("id", "finalScore");
+        // need to store the score in the DOM, since cant pass to event handler.
+        // promptEl.setAttribute("score", 33); // this works.
+        promptEl.setAttribute("score", timeLeftObj.timeLeft);  // finally got this to work. Not sure why - arghhh!
+
+        var EIdiv = document.createElement("div");
+        allDoneSection.appendChild(EIdiv); 
+        EIdiv.setAttribute("id", "enterInitDiv");  // Mainly to align enclosed objects l-r
+
+        div = document.createElement("h2");
+        EIdiv.appendChild(div);
+        div.innerText = "Enter Initials";
+        div.setAttribute("id", "EILabel");
+        
+        var textBox = document.createElement("INPUT");
+        EIdiv.appendChild(textBox);
+        textBox.setAttribute("type", "text");
+        textBox.setAttribute("maxlength", "3");
+        textBox.setAttribute("id", "nameTextBox");
+
+        var div = document.createElement("div");  /* couldnt get multi-line display wout this despite display:block - arghhh! */
+        var submitBtn = document.createElement("button");
+        EIdiv.appendChild(submitBtn);
+        submitBtn.setAttribute("id", "submitBtn");
+        submitBtn.innerText = "Submit";  // pretend like a submit button, but really just a button
+        submitBtn.setAttribute("class", "defaultBtn");
+        submitBtn.onclick = storeResult;  // beware not defined error - not sure why is previously occurred
+
+        allDoneSection.appendChild(div);
+        myLog("Done creating enter initials screen");
+    }  // end createEnterInitialsScreen( )
+
+// Store the score and the initials (storeage ordred by time, not high to low since not in instructions.)
+function storeResult () {
+    // Score passed in as hidden DOM attribute.
+    var score = document.getElementById("finalScore").getAttribute("score");
+    var textBox = document.getElementById("nameTextBox");
+    var inits = document.getElementById("nameTextBox").value;
+    myLog("Entering storeResults: Score is " + score + " Initials " + inits + " textBox " + textBox);
+    var newResult = {score: score, initials: inits};
+    scores.push(newResult);
+    myLog("Score entered: " + scores.length);
+    clearMain();
+    createStartScreen();
+}
 
 // when counting down (or as part of answering) we update the timeLeft.
 function updateDOMTime(timeLeft) {
@@ -271,6 +307,16 @@ function initQuestions() {
     correct = "all of the above";
     question = [prompt, answers, correct];
     questionsArray.push(question);
+    prompt = "String values must be enclosed in _________ when being assigned to variables";
+    answers = ["commas", "curley brackets", "quotes", "parenthesis"];
+    correct = "quotes";
+    question = [prompt, answers, correct];
+    questionsArray.push(question);    
+    prompt = "A very useful tool during development and debugging for printing values is";
+    answers = ["JavaScript", "terminal/bash", "for loops", "console.log"];
+    correct = "console.log";
+    question = [prompt, answers, correct];
+    questionsArray.push(question);    
     myLog("End initQuestions. Number of quesions: " + questionsArray.length);
 } 
 

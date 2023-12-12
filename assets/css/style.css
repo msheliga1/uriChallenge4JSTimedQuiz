@@ -1,6 +1,6 @@
 /* MJS URI Challenge 3 - Dynamic Javascript - Timed Javascript quiz */ 
 #main {
-    background: blue;
+    /* background: blue; */
 }
 
 #viewHighScoreButton {
@@ -37,14 +37,41 @@
     /* align-self: center; Wont work */
 }
 
-/* From hear down for questions and answers */
+/* From here down for questions and answers */
 #answerSection {
     width: 60%;
     margin-left: 20%;
-    background: pink; /* for debugging */
+    background: pink; /* for debugging - and I really like the look */
     display: block;
+    padding: 2%;  /* amazing how margin doesnt help here, but padding does */
 }
 
 .answerBtn {
     margin-top: 1%;
+}
+
+#correctOrWrongDiv {
+/*    margin-bottom: 20%;  /* Wont show up - arghh! */
+    margin-bottom: 2%;
+}
+
+/* All Done Enter initials screen */ 
+#allDoneSection {
+    width: 60%;
+    margin-left: 20%;
+    background: white;
+    display: block;
+}
+
+#enterInitDiv {
+    /* display: inline; */
+    display: flex;
+}
+
+#submitBtn {
+    margin-left: 1%;
+}
+
+#nameTextBox {
+    margin: 0, 2%;
 }
