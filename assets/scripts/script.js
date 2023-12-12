@@ -79,8 +79,8 @@ function clearMain( )
 // Note: Do NOT display the high score buttons while taking the quiz.
 function takeQuiz( ) {
     myLog("Starting take quiz.");
-    const totalQuizTime = 20;  // change to 75 for real quiz
-    const wrongPenaltyTime = 5;  // 15 in demo
+    const totalQuizTime = 75;  // change to 75 for real quiz - but this is much too long.
+    const wrongPenaltyTime = 10;  // 15 in demo
 
     /* These 3 variables are effectively global inside the takeQuiz screen. */
     var timeLeftObj = { timeLeft: totalQuizTime}; 

@@ -9,8 +9,8 @@ This is the week 4 challenge due 12.11.23.
 ## Link to Repo and Deployed Webpage
 Link to GitHub Repo: https://github.com/msheliga1/uriChallenge4JSTimedQuiz.git
 Here is a link to the deployed github.io site. https://msheliga1.github.io/uriChallenge3js/  
-Link to screenshot of deployed github.io site. ![Challenge 3 GitHub Deployed Screenshot](./workingScreenShot.png) 
-
+Link to screenshot of deployed github.io site. ![Challenge 4 GitHub Deployed Start Screenshot](./assets/images/workingScreenshotStart.PNG) 
+Link to screenshot of deployed github.io site - Question. ![Challenge 4 GitHub Deployed Question Screenshot](./assets/images/workingScreenshotQuestion.PNG) 
 
 ## Project Goals
 In summary this repo will use dynamic javascript to create a timed multiple choice quiz with past scores.   
@@ -24,8 +24,8 @@ Github:
     -- Could not find a quicker way to copy over all files.    
     ... create HTML and CSS ...  
     Commit and push files back to gitHub  
-    Deploy code (Settings ... GitHub Pages->main)  
-        - Deployed code name on the right. 
+    Deploy code (Settings ... CA on left, GitHub Pages->main)  
+        - Deployed code name on the right - maybe!!
     Make Sure it Works  
     Insert Screenshot of deployment into readme file.  
   
